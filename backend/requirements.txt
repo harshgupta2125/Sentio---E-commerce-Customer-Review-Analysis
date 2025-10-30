@@ -1,0 +1,9 @@
+FastAPI
+requests
+beautifulsoup4
+transformers
+uvicorn
+pydantic
+sqlalchemy
+pytest
+httpx
