@@ -1,81 +1,99 @@
-# Sentio - E-commerce Customer Review Analysis
+# Sentio - Amazon Product Review Analysis
 
-Sentio is a web application designed to analyze customer reviews from e-commerce platforms. It utilizes a combination of web scraping, sentiment analysis, and a user-friendly dashboard to provide insights into customer feedback.
+Sentio analyzes customer reviews for Amazon product pages and provides sentiment, aspect summaries, and a buy/avoid recommendation. This deployment and the frontend are intentionally limited to Amazon product pages only.
+
+Important: This project currently supports Amazon product pages (amazon.com, amazon.in, and other amazon.* domains) only. Submitting URLs from other marketplaces (Flipkart, Meesho, etc.) will return an error.
 
 ## Features
 
-- **Web Scraping**: Automatically extracts customer reviews from specified e-commerce product pages.
-- **Sentiment Analysis**: Analyzes the sentiment of the reviews using advanced machine learning models.
-- **Summary Dashboard**: Displays a comprehensive overview of the sentiment analysis results, including visualizations and statistics.
+- Fetches and analyzes reviews from Amazon product pages.
+- Sentiment analysis (positive / neutral / negative) per review.
+- Aggregated summary: overall sentiment breakdown, average score, top aspects.
+- Recommendation: BUY / AVOID / CONSIDER / NEUTRAL with explanation.
+- Export reviews and analysis to CSV.
 
 ## Tech Stack
 
-- **Frontend**: Built with React and TypeScript for a responsive and interactive user interface.
-- **Backend**: Developed using Python with FastAPI for efficient API handling and data processing.
-- **Database**: Utilizes a database for storing review data and analysis results.
+- Frontend: React + TypeScript
+- Backend: FastAPI (Python)
+- Optional: Playwright (for JS-rendered pages) — not required for Amazon pages in this deployment
 
 ## Getting Started
 
 ### Prerequisites
 
-- Python 3.7 or higher
+- Python 3.7+
 - Node.js and npm
-- Docker (optional, for containerization)
 
-### Installation
+### Install
 
-1. Clone the repository:
+1. Clone repository
    ```
    git clone https://github.com/yourusername/sentio.git
    cd sentio
    ```
 
-2. Set up the backend:
-   - Navigate to the backend directory:
-     ```
-     cd backend
-     ```
-   - Install the required Python packages:
-     ```
-     pip install -r requirements.txt
-     ```
-
-3. Set up the frontend:
-   - Navigate to the frontend directory:
-     ```
-     cd frontend
-     ```
-   - Install the required Node.js packages:
-     ```
-     npm install
-     ```
-
-### Running the Application
-
-#### Backend
-
-1. Start the FastAPI server:
+2. Backend
    ```
-   uvicorn app.main:app --reload
+   cd backend
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
    ```
 
-#### Frontend
-
-1. Start the React application:
+3. Frontend
    ```
-   npm start
+   cd ../frontend
+   npm install
    ```
 
-### Usage
+### Run (development)
 
-- Access the application in your web browser at `http://localhost:3000`.
-- Enter the URL of the e-commerce product page you want to analyze and submit the form.
-- View the sentiment analysis results on the dashboard.
+- Start backend:
+  ```
+  cd backend
+  source .venv/bin/activate
+  uvicorn app.main:app --reload --port 8000
+  ```
+- Start frontend:
+  ```
+  cd ../frontend
+  npm run dev
+  ```
+- Open: http://localhost:3000
+
+## Usage
+
+- Paste an Amazon product page URL (amazon.com, amazon.in, etc.) into the input and click Analyze.
+- View recommendations, sentiment charts, and top aspects.
+- Use filters to show Positive / Neutral / Negative reviews and export results as CSV.
+
+## Notes & Limitations
+
+- Amazon-only: The UI and client explicitly validate Amazon hosts and will reject non-Amazon URLs.
+- JS-heavy pages on other marketplaces are not supported in this deployment. To support more sites reliably, the backend must run a Playwright-capable environment and include site-specific parsers.
+- If you need multi-marketplace support, consider deploying a separate scraping service on a platform that supports headless Chromium (Render, Railway, Fly, or a VPS/Docker host), and update the backend to use Playwright for rendering.
+
+## Configuration
+
+- Deployed backend base URL is configured in `frontend/src/services/api.ts` (DEFAULT_API).
+- Adjust thresholds and recommendation logic in the backend recommendation module if needed.
+
+## Troubleshooting
+
+- 400 Bad Request: ensure the submitted URL is an Amazon product page and includes the domain (https://).
+- CORS issues: enable CORS on the backend or proxy requests during development.
+- If reviews are missing, try a canonical Amazon product page (not a shortened or affiliate link).
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
+Contributions are welcome. For multi-marketplace support, please:
+
+- Add site-specific review URL builders and parsers.
+- Add Playwright-based scraping only on Playwright-capable deployments.
+
+Open issues or submit pull requests for enhancements or fixes.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+MIT License.
